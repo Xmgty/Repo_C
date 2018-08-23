@@ -1,0 +1,74 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <map>
+#include <conio.h>
+#include <iterator>
+#include <algorithm>
+
+class Dict
+{
+protected:
+	std::map<std::string, int> dict;
+	std::string str;
+	std::ifstream file;
+	std::ofstream file2;
+public:
+	Dict() = delete;
+	Dict(std::string pathIn, std::string pathOut);
+	~Dict() {}
+private:
+	void Tolower();
+};
+
+void Dict::Tolower()
+{
+	if (str[0] >= 'À' && str[0] <= 'ß')
+	{
+		str[0] -= ('À' - 'ß');
+	}
+}
+Dict::Dict(std::string pathIn, std::string pathOut)
+{
+	file.open(pathIn);
+	if (!file.is_open())
+	{
+		std::cout << "Error while open file" << std::endl;
+	}
+	else
+	{
+		file2.open(pathOut);
+		if (!file2.is_open())
+		{
+			std::cout << "Error while open file2" << std::endl;
+		}
+		else
+		{
+			while (file >> str)
+			{
+				Tolower();
+				if (!dict.count(str))
+				{
+					dict[str] = 1;
+				}
+				else
+				{
+					dict[str]++;
+				}
+			}
+			for (auto it = dict.begin(); it != dict.end(); it++)
+			{
+				file2 << it->first << "\t" << it->second << "\n";
+			}
+		}
+		file.close();
+		file2.close();
+	}
+}
+
+int main()
+{
+	Dict fDict("File.txt", "File2.txt");
+	_getch();
+	return 0;
+}
